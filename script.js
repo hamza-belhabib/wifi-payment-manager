@@ -1439,12 +1439,27 @@ function resetMonthlyPayments() {
 }
 
 function exportDataJSON() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `wifi_building_backup_${Date.now()}.json`);
-    dlAnchor.click();
-    showToast("Sauvegarde JSON téléchargée !");
+    try {
+        const jsonStr = JSON.stringify(appData, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", url);
+        dlAnchor.setAttribute("download", `wifi_building_backup_${Date.now()}.json`);
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        document.body.removeChild(dlAnchor);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        showToast("Sauvegarde JSON téléchargée !");
+    } catch (e) {
+        console.error("Erreur export blob, utilisation data-url:", e);
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `wifi_building_backup_${Date.now()}.json`);
+        dlAnchor.click();
+        showToast("Sauvegarde JSON téléchargée !");
+    }
 }
 
 function importDataJSON(event) {
@@ -1453,22 +1468,103 @@ function importDataJSON(event) {
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        try {
-            const imported = JSON.parse(e.target.result);
-            if (imported && imported.floors) {
-                appData = imported;
-                saveData();
-                updateDashboard();
-                renderGlobalList();
-                showToast("Données importées avec succès !");
-            } else {
-                alert("Fichier JSON non valide pour cette application.");
-            }
-        } catch (err) {
-            alert("Erreur lors de la lecture du fichier : " + err.message);
+        const success = restoreFromJSONText(e.target.result);
+        if (success) {
+            // Réinitialiser pour pouvoir réimporter le même fichier
+            event.target.value = '';
         }
     };
     reader.readAsText(file);
+}
+
+/**
+ * Valide et restaure les données à partir d'un texte JSON
+ */
+function restoreFromJSONText(text) {
+    if (!text || !text.trim()) {
+        alert("Le texte fourni est vide.");
+        return false;
+    }
+    try {
+        const imported = JSON.parse(text.trim());
+        if (imported && imported.floors && Array.isArray(imported.floors)) {
+            appData = imported;
+            saveData();
+            updateDashboard();
+            if (currentFloorId) {
+                renderApartments(currentFloorId);
+            }
+            renderGlobalList();
+            showToast("Données restaurées avec succès ! 🎉");
+            return true;
+        } else {
+            alert("Format non valide : Le fichier doit contenir les étages de l'immeuble.");
+            return false;
+        }
+    } catch (err) {
+        alert("Erreur lors de la lecture du fichier JSON : " + err.message);
+        return false;
+    }
+}
+
+/**
+ * Copie le texte de sauvegarde dans le presse-papier
+ */
+function copyBackupText() {
+    const jsonStr = JSON.stringify(appData, null, 2);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(jsonStr).then(() => {
+            showToast("Texte de sauvegarde copié dans le presse-papier !");
+        }).catch(() => {
+            openPasteBackupModal(jsonStr);
+        });
+    } else {
+        openPasteBackupModal(jsonStr);
+    }
+}
+
+function openPasteBackupModal(prefillValue) {
+    const textarea = document.getElementById('paste-backup-textarea');
+    const label = document.getElementById('paste-backup-label');
+    const confirmBtn = document.getElementById('btn-paste-confirm');
+    const title = document.getElementById('paste-modal-title');
+
+    if (prefillValue) {
+        if (title) title.textContent = "📋 Votre texte de sauvegarde";
+        if (label) label.textContent = "Sélectionnez et copiez tout le texte ci-dessous :";
+        if (textarea) textarea.value = prefillValue;
+        if (confirmBtn) confirmBtn.style.display = 'none';
+    } else {
+        if (title) title.textContent = "📥 Coller & Restaurer";
+        if (label) label.textContent = "Collez le texte JSON de sauvegarde ci-dessous :";
+        if (textarea) textarea.value = '';
+        if (confirmBtn) {
+            confirmBtn.style.display = 'inline-block';
+            confirmBtn.textContent = 'Restaurer les données';
+        }
+    }
+
+    document.getElementById('modal-paste-backdrop').classList.add('active');
+}
+
+function closePasteModal(event) {
+    if (!event || event.target.id === 'modal-paste-backdrop' || event.target.classList.contains('modal-close') || event.type === 'button') {
+        document.getElementById('modal-paste-backdrop').classList.remove('active');
+    }
+}
+
+function confirmPasteRestore() {
+    const textarea = document.getElementById('paste-backup-textarea');
+    if (!textarea) return;
+    const val = textarea.value.trim();
+    if (!val) {
+        alert("Veuillez coller le texte de sauvegarde avant de valider.");
+        return;
+    }
+    const success = restoreFromJSONText(val);
+    if (success) {
+        closePasteModal();
+    }
 }
 
 function resetToInitialData() {
@@ -1594,3 +1690,8 @@ window.onNameInput = onNameInput;
 window.onNameBlur = onNameBlur;
 window.goToPrevFloor = goToPrevFloor;
 window.goToNextFloor = goToNextFloor;
+window.restoreFromJSONText = restoreFromJSONText;
+window.copyBackupText = copyBackupText;
+window.openPasteBackupModal = openPasteBackupModal;
+window.closePasteModal = closePasteModal;
+window.confirmPasteRestore = confirmPasteRestore;
