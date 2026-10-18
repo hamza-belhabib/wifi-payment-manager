@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📶 Gestion Wi-Fi — Résidence</title>
+    <meta name="description" content="Application moderne de gestion des paiements Wi-Fi pour immeuble résidentiel.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Conteneur principal de l'application -->
+    <div class="app-container">
+
+        <!-- Barre de navigation supérieure -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">Gestion Wi-Fi</h1>
+                    <p class="brand-subtitle">Immeuble Résidentiel</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="month-pill" id="current-month-badge">
+                    <span class="pulse-indicator"></span>
+                    <span id="current-month-label">Octobre 2026</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Barre d'onglets de navigation rapide -->
+        <nav class="nav-tabs" aria-label="Navigation principale">
+            <button class="nav-tab active" data-view="dashboard" id="tab-dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Accueil</span>
+            </button>
+            <button class="nav-tab" data-view="floors-menu" id="tab-floors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <path d="M9 22v-4h6v4"></path>
+                    <path d="M8 6h.01"></path>
+                    <path d="M16 6h.01"></path>
+                    <path d="M8 10h.01"></path>
+                    <path d="M16 10h.01"></path>
+                    <path d="M8 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                </svg>
+                <span>Étages</span>
+            </button>
+            <button class="nav-tab" data-view="stats" id="tab-stats">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 20V10"></path>
+                    <path d="M12 20V4"></path>
+                    <path d="M6 20v-6"></path>
+                </svg>
+                <span>Statistiques</span>
+            </button>
+            <button class="nav-tab" data-view="settings" id="tab-settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Options</span>
+            </button>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- VUE 1 : TABLEAU DE BORD (ACCUEIL)              -->
+        <!-- ============================================== -->
+        <main id="view-dashboard" class="app-view active">
+
+            <!-- Carte Objectif & Progression globale -->
+            <section class="card goal-card" aria-label="Progression du paiement mensuel">
+                <div class="goal-header">
+                    <div>
+                        <span class="badge-tag">Objectif mensuel</span>
+                        <h2 class="goal-amount"><span id="dash-goal-amount">400</span> DH</h2>
+                    </div>
+                    <div class="goal-collected-block">
+                        <span class="goal-sublabel">Montant collecté</span>
+                        <div class="goal-collected-amount"><span id="dash-collected-amount">250</span> DH</div>
+                    </div>
+                </div>
+
+                <!-- Jauge de progression visuelle -->
+                <div class="progress-section">
+                    <div class="progress-labels">
+                        <span class="progress-percent" id="dash-progress-percent">63%</span>
+                        <span class="progress-status-text" id="dash-progress-status">150 DH restant</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar-fill" id="dash-progress-fill" style="width: 63%;">
+                            <span class="progress-shimmer"></span>
+                        </div>
+                    </div>
+                    <!-- Marqueurs de jauge -->
+                    <div class="progress-milestones">
+                        <span>0%</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <!-- Alerte en cas de dépassement ou complétion -->
+                <div id="dash-goal-alert" class="goal-alert hidden">
+                    <span id="dash-goal-alert-text"></span>
+                </div>
+            </section>
+
+            <!-- Bannière Tarif par personne & Calcul automatique -->
+            <section class="card rate-banner-card" aria-label="Tarif par personne">
+                <div class="rate-banner-content">
+                    <div class="rate-icon-wrap">👥</div>
+                    <div class="rate-info">
+                        <span class="rate-label">Tarif de cotisation par personne</span>
+                        <div class="rate-display">
+                            <strong id="dash-rate-amount">20</strong> <span>DH / personne</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-secondary btn-sm" onclick="openPricePerPersonModal()" title="Modifier le tarif par personne">
+                    ✏️ Modifier le tarif
+                </button>
+            </section>
+
+            <!-- Statistiques globales en grille -->
+            <section class="stats-overview" aria-label="Statistiques globales">
+                <div class="stat-card">
+                    <div class="stat-icon-wrap icon-blue">
+                        <span class="emoji-icon">🏠</span>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Nombre d'appartements</span>
+                        <span class="stat-number" id="dash-total-apts">13</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrap icon-purple">
+                        <span class="emoji-icon">👥</span>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total de personnes</span>
+                        <span class="stat-number" id="dash-total-residents">40</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrap icon-green">
+                        <span class="emoji-icon">💰</span>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Montant collecté</span>
+                        <span class="stat-number text-success"><span id="dash-stat-collected">250</span> DH</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrap icon-amber">
+                        <span class="emoji-icon">📌</span>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Reste à collecter</span>
+                        <span class="stat-number text-danger"><span id="dash-stat-remaining">150</span> DH</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Répartition des statuts de paiement -->
+            <section class="card status-summary-card">
+                <div class="status-summary-header">
+                    <h3 class="section-title">État des paiements</h3>
+                    <span class="subtitle-helper" id="dash-status-total-ratio">13 appartements au total</span>
+                </div>
+
+                <div class="status-badges-grid">
+                    <div class="status-badge-item badge-item-paid" onclick="filterAndShowStats('paid')">
+                        <div class="badge-dot dot-green"></div>
+                        <div class="badge-item-content">
+                            <span class="badge-item-title">Payé</span>
+                            <span class="badge-item-count" id="dash-count-paid">4</span>
+                        </div>
+                    </div>
+
+                    <div class="status-badge-item badge-item-partial" onclick="filterAndShowStats('partial')">
+                        <div class="badge-dot dot-orange"></div>
+                        <div class="badge-item-content">
+                            <span class="badge-item-title">Paiement partiel</span>
+                            <span class="badge-item-count" id="dash-count-partial">2</span>
+                        </div>
+                    </div>
+
+                    <div class="status-badge-item badge-item-unpaid" onclick="filterAndShowStats('unpaid')">
+                        <div class="badge-dot dot-red"></div>
+                        <div class="badge-item-content">
+                            <span class="badge-item-title">Non payé</span>
+                            <span class="badge-item-count" id="dash-count-unpaid">7</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section des 4 étages de l'immeuble -->
+            <section class="building-floors-section">
+                <div class="section-header-flex">
+                    <h3 class="section-title">Étages de l'immeuble</h3>
+                    <span class="section-badge">4 zones</span>
+                </div>
+
+                <!-- Grille des 4 cartes d'étages -->
+                <div class="floors-grid" id="floors-container">
+                    <!-- Généré dynamiquement en JavaScript : Tag 1, Tag 2, Tag 3, Le toit -->
+                </div>
+            </section>
+        </main>
+
+        <!-- ============================================== -->
+        <!-- VUE 2 : DÉTAIL D'UN ÉTAGE & SES APPARTEMENTS   -->
+        <!-- ============================================== -->
+        <main id="view-floor" class="app-view">
+            <!-- Bouton Retour universel et en-tête d'étage -->
+            <div class="floor-view-header">
+                <button class="btn-back" onclick="navigateBack()" aria-label="Retour à l'accueil">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    <span>Retour</span>
+                </button>
+
+                <!-- Navigation entre les étages avec flèches gauche/droite -->
+                <div class="floor-header-center">
+                    <button class="btn-floor-nav" id="btn-floor-prev" onclick="goToPrevFloor()" title="Étage précédent" aria-label="Étage précédent">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m15 18-6-6 6-6"/>
+                        </svg>
+                    </button>
+
+                    <div class="floor-title-group">
+                        <h2 class="floor-title" id="current-floor-title">TAG 1</h2>
+                        <span class="floor-subtitle" id="current-floor-stats">3 appartements</span>
+                    </div>
+
+                    <button class="btn-floor-nav" id="btn-floor-next" onclick="goToNextFloor()" title="Étage suivant" aria-label="Étage suivant">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <button class="btn-icon-action" onclick="openAddApartmentModal()" title="Ajouter un appartement">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mini statistiques de l'étage sélectionné -->
+            <div class="floor-stats-banner" id="current-floor-banner">
+                <!-- Rempli par JavaScript -->
+            </div>
+
+            <!-- Grille des appartements sous forme de petites maisons 🏠 -->
+            <section class="apartments-section">
+                <div class="apartments-grid" id="apartments-container">
+                    <!-- Cartes d'appartements générées par JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- ============================================== -->
+        <!-- VUE 3 : STATISTIQUES & LISTE GLOBALE          -->
+        <!-- ============================================== -->
+        <main id="view-stats" class="app-view">
+            <div class="stats-header">
+                <button class="btn-back" onclick="navigateBack()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    <span>Retour</span>
+                </button>
+                <h2 class="section-title">Liste globale des paiements</h2>
+            </div>
+
+            <!-- Filtres de statut -->
+            <div class="filter-pills-bar">
+                <button class="filter-pill active" data-filter="all" onclick="applyStatsFilter('all', this)">Tous (<span id="stats-filter-all">13</span>)</button>
+                <button class="filter-pill" data-filter="paid" onclick="applyStatsFilter('paid', this)">🟢 Payé (<span id="stats-filter-paid">4</span>)</button>
+                <button class="filter-pill" data-filter="partial" onclick="applyStatsFilter('partial', this)">🟠 Partiel (<span id="stats-filter-partial">2</span>)</button>
+                <button class="filter-pill" data-filter="unpaid" onclick="applyStatsFilter('unpaid', this)">🔴 Non payé (<span id="stats-filter-unpaid">7</span>)</button>
+            </div>
+
+            <!-- Liste globale interactive -->
+            <div class="global-list-container" id="global-apartments-list">
+                <!-- Rempli par JavaScript -->
+            </div>
+
+            <!-- Action rapide : rappel WhatsApp pour les retardataires -->
+            <div class="card whatsapp-reminder-card">
+                <div class="reminder-icon">💬</div>
+                <div class="reminder-content">
+                    <h4>Rappel de paiement Wi-Fi</h4>
+                    <p>Générez un message type pour les résidents qui n'ont pas encore réglé leur facture.</p>
+                </div>
+                <button class="btn-secondary" onclick="generateReminderMessage()">
+                    <span>Copier le message</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- ============================================== -->
+        <!-- VUE 4 : PARAMÈTRES & GESTION DU MOIS           -->
+        <!-- ============================================== -->
+        <main id="view-settings" class="app-view">
+            <div class="stats-header">
+                <button class="btn-back" onclick="navigateBack()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    <span>Retour</span>
+                </button>
+                <h2 class="section-title">Options & Configuration</h2>
+            </div>
+
+            <!-- Configuration de l'objectif mensuel -->
+            <div class="card settings-card">
+                <h3 class="card-title">🎯 Objectif mensuel Wi-Fi</h3>
+                <p class="card-desc">Modifiez le montant total nécessaire pour régler l'abonnement Wi-Fi.</p>
+                <div class="settings-input-group">
+                    <input type="number" id="setting-target-input" class="form-input" min="0" step="any" value="400">
+                    <span class="input-suffix">DH</span>
+                    <button class="btn-primary" onclick="saveTargetSetting()">Enregistrer</button>
+                </div>
+            </div>
+
+            <!-- Configuration du tarif par personne (Calcul automatique) -->
+            <div class="card settings-card">
+                <h3 class="card-title">👥 Tarif par personne (Calcul automatique)</h3>
+                <p class="card-desc">Fixez le montant de cotisation par personne (ex: 20 DH). Lors de l'édition d'un appartement, le montant demandé est automatiquement calculé : <em>Nombre de personnes × Tarif</em>.</p>
+                <div class="settings-input-group">
+                    <input type="number" id="setting-rate-input" class="form-input" min="0" step="any" value="20">
+                    <span class="input-suffix">DH / pers.</span>
+                    <button class="btn-primary" onclick="savePricePerPersonSetting()">Enregistrer</button>
+                </div>
+                <div style="margin-top: 14px;">
+                    <button class="btn-outline-primary" onclick="applyPricePerPersonToAll()" style="width: 100%;">
+                        ⚡ Recalculer automatiquement tous les appartements selon ce tarif
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mois en cours & Gestion mensuelle -->
+            <div class="card settings-card">
+                <h3 class="card-title">📅 Mois de facturation</h3>
+                <p class="card-desc">Sélectionnez le mois en cours pour la collecte.</p>
+                <div class="settings-input-group">
+                    <input type="text" id="setting-month-input" class="form-input" value="Octobre 2026">
+                    <button class="btn-primary" onclick="saveMonthSetting()">Mettre à jour</button>
+                </div>
+                <div class="settings-action-row" style="margin-top: 16px;">
+                    <button class="btn-outline-warning" onclick="resetMonthlyPayments()">
+                        🔄 Réinitialiser les paiements pour un nouveau mois
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sauvegarde locale & Données -->
+            <div class="card settings-card">
+                <h3 class="card-title">💾 Données & Sauvegarde (localStorage)</h3>
+                <p class="card-desc">Vos données sont stockées de manière permanente dans votre navigateur.</p>
+                <div class="data-actions-grid">
+                    <button class="btn-secondary" onclick="exportDataJSON()">
+                        📤 Exporter les données (JSON)
+                    </button>
+                    <label class="btn-secondary file-upload-label">
+                        📥 Importer des données
+                        <input type="file" id="import-json-input" accept=".json" onchange="importDataJSON(event)" style="display:none;">
+                    </label>
+                    <button class="btn-outline-danger" onclick="resetToInitialData()">
+                        ⚠️ Réinitialiser aux données par défaut
+                    </button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 1 : DÉTAILS D'UN APPARTEMENT             -->
+    <!-- ============================================== -->
+    <div class="modal-backdrop" id="modal-details-backdrop" onclick="closeDetailsModal(event)">
+        <div class="modal-dialog house-modal-dialog">
+            <div class="house-modal-roof">
+                <div class="roof-triangle"></div>
+                <div class="roof-badge" id="modal-details-status-badge">🟢 Payé</div>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title-wrap">
+                        <span class="modal-subtitle" id="modal-details-floor">TAG 1</span>
+                        <h3 class="modal-title" id="modal-details-title">Appartement 1</h3>
+                    </div>
+                    <button class="modal-close" onclick="closeDetailsModal()" aria-label="Fermer">✕</button>
+                </div>
+
+                <!-- Grille d'informations clés de l'appartement -->
+                <div class="details-info-grid">
+                    <div class="info-block">
+                        <span class="info-icon">👥</span>
+                        <div class="info-text">
+                            <span class="info-label">Nombre de personnes</span>
+                            <span class="info-val" id="modal-details-residents">4</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-icon">💰</span>
+                        <div class="info-text">
+                            <span class="info-label">Montant demandé</span>
+                            <span class="info-val"><span id="modal-details-required">50</span> DH</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-icon">💵</span>
+                        <div class="info-text">
+                            <span class="info-label">Montant payé</span>
+                            <span class="info-val text-success"><span id="modal-details-paid">30</span> DH</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-icon">📌</span>
+                        <div class="info-text">
+                            <span class="info-label">Reste</span>
+                            <span class="info-val text-danger"><span id="modal-details-remaining">20</span> DH</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block full-width">
+                        <span class="info-icon">📅</span>
+                        <div class="info-text">
+                            <span class="info-label">Date du paiement</span>
+                            <span class="info-val" id="modal-details-date">18/10/2026</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block full-width" id="modal-details-notes-block">
+                        <span class="info-icon">📝</span>
+                        <div class="info-text">
+                            <span class="info-label">Notes & Remarques</span>
+                            <span class="info-val text-muted" id="modal-details-notes">Aucune remarque</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action demandés -->
+                <div class="modal-actions-column">
+                    <button class="btn-action-primary" onclick="openPaymentFromDetails()">
+                        <span class="btn-emoji">💰</span>
+                        <span>Enregistrer un paiement</span>
+                    </button>
+
+                    <button class="btn-action-secondary" onclick="openEditFromDetails()">
+                        <span class="btn-emoji">✏️</span>
+                        <span>Modifier</span>
+                    </button>
+
+                    <button class="btn-action-danger" onclick="deleteApartmentFromDetails()">
+                        <span class="btn-emoji">🗑️</span>
+                        <span>Supprimer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 2 : ENREGISTRER UN PAIEMENT              -->
+    <!-- ============================================== -->
+    <div class="modal-backdrop" id="modal-payment-backdrop" onclick="closePaymentModal(event)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="modal-subtitle" id="payment-modal-floor-apt">TAG 1 — Appartement 1</span>
+                        <h3 class="modal-title">💰 Enregistrer un paiement</h3>
+                    </div>
+                    <button class="modal-close" onclick="closePaymentModal()" aria-label="Fermer">✕</button>
+                </div>
+
+                <!-- Résumé des montants -->
+                <div class="payment-summary-box">
+                    <div class="sum-item">
+                        <span>Demandé</span>
+                        <strong id="payment-box-required">50 DH</strong>
+                    </div>
+                    <div class="sum-item">
+                        <span>Déjà payé</span>
+                        <strong id="payment-box-current-paid" class="text-success">0 DH</strong>
+                    </div>
+                    <div class="sum-item">
+                        <span>Reste actuel</span>
+                        <strong id="payment-box-current-remaining" class="text-danger">50 DH</strong>
+                    </div>
+                </div>
+
+                <form id="form-add-payment" onsubmit="handlePaymentSubmit(event)">
+                    <div class="form-group">
+                        <label for="payment-input-amount">Montant payé (DH) *</label>
+                        <div class="input-with-addons">
+                            <input type="number" id="payment-input-amount" class="form-input form-input-lg" min="0" max="10000" step="any" required placeholder="Ex: 50">
+                            <span class="input-addon">DH</span>
+                        </div>
+                    </div>
+
+                    <!-- Boutons rapides de remplissage de montant -->
+                    <div class="quick-amounts-bar">
+                        <button type="button" class="btn-chip" onclick="setQuickPaymentAmount('full')">Tout payer</button>
+                        <button type="button" class="btn-chip" onclick="setQuickPaymentAmount(50)">50 DH</button>
+                        <button type="button" class="btn-chip" onclick="setQuickPaymentAmount(30)">30 DH</button>
+                        <button type="button" class="btn-chip" onclick="setQuickPaymentAmount(25)">25 DH</button>
+                        <button type="button" class="btn-chip" onclick="setQuickPaymentAmount(0)">0 (Non payé)</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-input-date">Date du paiement</label>
+                        <input type="date" id="payment-input-date" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-input-notes">Remarques (facultatif)</label>
+                        <input type="text" id="payment-input-notes" class="form-input" placeholder="Ex: Espèces, Virement, etc.">
+                    </div>
+
+                    <div class="modal-buttons-row">
+                        <button type="button" class="btn-secondary" onclick="closePaymentModal()">Annuler</button>
+                        <button type="submit" class="btn-primary">Valider le paiement</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 3 : MODIFIER UN APPARTEMENT              -->
+    <!-- ============================================== -->
+    <div class="modal-backdrop" id="modal-edit-backdrop" onclick="closeEditModal(event)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="modal-subtitle" id="edit-modal-floor-label">TAG 1</span>
+                        <h3 class="modal-title">✏️ Modifier l'appartement</h3>
+                    </div>
+                    <button class="modal-close" onclick="closeEditModal()" aria-label="Fermer">✕</button>
+                </div>
+
+                <form id="form-edit-apartment" onsubmit="handleEditSubmit(event)">
+                    <div class="form-group">
+                        <label for="edit-input-name">Numéro ou nom de l'appartement *</label>
+                        <input type="text" id="edit-input-name" class="form-input" required placeholder="Ex: 1, 2, A..." oninput="onNameInput(this, 'edit-name-hint')" onblur="onNameBlur(this, 'edit-name-hint')">
+                        <span class="form-help text-primary" id="edit-name-hint" style="font-weight:600; margin-top:4px;">💡 Écrivez juste le numéro (ex: 1), "Appartement" sera ajouté automatiquement.</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-half">
+                            <label for="edit-input-residents">👥 Nombre de personnes</label>
+                            <input type="number" id="edit-input-residents" class="form-input" min="0" max="20" required value="0" oninput="onEditResidentsInput()">
+                        </div>
+
+                        <div class="form-group col-half">
+                            <label for="edit-input-required">💰 Montant demandé (DH)</label>
+                            <input type="number" id="edit-input-required" class="form-input" min="0" max="10000" step="any" required value="50">
+                        </div>
+                    </div>
+                    <div class="calc-hint" id="edit-calc-hint">💡 Calcul automatique : 0 personne × 20 DH = 0 DH</div>
+
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label for="edit-input-paid">💵 Montant déjà payé (DH)</label>
+                        <input type="number" id="edit-input-paid" class="form-input" min="0" max="10000" step="any" value="0">
+                        <span class="form-help">Le statut (Payé, Partiel, Non payé) sera calculé automatiquement.</span>
+                    </div>
+
+                    <div class="modal-buttons-row">
+                        <button type="button" class="btn-secondary" onclick="closeEditModal()">Annuler</button>
+                        <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 4 : AJOUTER UN APPARTEMENT               -->
+    <!-- ============================================== -->
+    <div class="modal-backdrop" id="modal-add-backdrop" onclick="closeAddModal(event)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="modal-subtitle">Nouvel ajout</span>
+                        <h3 class="modal-title">➕ Ajouter un appartement</h3>
+                    </div>
+                    <button class="modal-close" onclick="closeAddModal()" aria-label="Fermer">✕</button>
+                </div>
+
+                <form id="form-add-apartment" onsubmit="handleAddSubmit(event)">
+                    <div class="form-group">
+                        <label for="add-select-floor">Étage / Zone *</label>
+                        <select id="add-select-floor" class="form-input" required>
+                            <option value="tag-1">TAG 1</option>
+                            <option value="tag-2">TAG 2</option>
+                            <option value="tag-3">TAG 3</option>
+                            <option value="le-toit">LE TOIT</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-input-name">Numéro ou nom de l'appartement *</label>
+                        <input type="text" id="add-input-name" class="form-input" required placeholder="Ex: 5, 6, B..." oninput="onNameInput(this, 'add-name-hint')" onblur="onNameBlur(this, 'add-name-hint')">
+                        <span class="form-help text-primary" id="add-name-hint" style="font-weight:600; margin-top:4px;">💡 Écrivez juste le numéro (ex: 5), "Appartement" sera ajouté automatiquement.</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-half">
+                            <label for="add-input-residents">👥 Nombre de personnes</label>
+                            <input type="number" id="add-input-residents" class="form-input" min="0" max="20" value="0" required oninput="onAddResidentsInput()">
+                        </div>
+
+                        <div class="form-group col-half">
+                            <label for="add-input-required">💰 Montant demandé (DH)</label>
+                            <input type="number" id="add-input-required" class="form-input" min="0" max="10000" step="any" value="0" required>
+                        </div>
+                    </div>
+                    <div class="calc-hint" id="add-calc-hint">💡 Calcul automatique : 0 personne × 20 DH = 0 DH</div>
+
+                    <div class="modal-buttons-row" style="margin-top: 18px;">
+                        <button type="button" class="btn-secondary" onclick="closeAddModal()">Annuler</button>
+                        <button type="submit" class="btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 5 : MODIFIER LE TARIF PAR PERSONNE       -->
+    <!-- ============================================== -->
+    <div class="modal-backdrop" id="modal-rate-backdrop" onclick="closeRateModal(event)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="modal-subtitle">Paramètre global</span>
+                        <h3 class="modal-title">👥 Tarif par personne</h3>
+                    </div>
+                    <button class="modal-close" onclick="closeRateModal()" aria-label="Fermer">✕</button>
+                </div>
+
+                <form id="form-rate-modal" onsubmit="handleRateSubmit(event)">
+                    <div class="form-group">
+                        <label for="rate-modal-input">Montant de la cotisation par personne (DH) *</label>
+                        <div class="input-with-addons">
+                            <input type="number" id="rate-modal-input" class="form-input form-input-lg" min="0" step="any" required value="20">
+                            <span class="input-addon">DH</span>
+                        </div>
+                        <span class="form-help">Ce tarif sera utilisé pour calculer automatiquement : <em>Nombre de personnes × Tarif</em>.</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label class="checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.88rem; font-weight:600; padding:10px 14px; background:var(--bg-surface-alt); border-radius:var(--radius-md);">
+                            <input type="checkbox" id="rate-modal-apply-all" checked style="width:20px; height:20px; cursor:pointer;">
+                            <span>Recalculer automatiquement tous les appartements existants avec ce tarif</span>
+                        </label>
+                    </div>
+
+                    <div class="modal-buttons-row" style="margin-top: 20px;">
+                        <button type="button" class="btn-secondary" onclick="closeRateModal()">Annuler</button>
+                        <button type="submit" class="btn-primary">Enregistrer le tarif</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notification flottante -->
+    <div id="toast" class="toast-notification"></div>
+
+    <!-- Script principal de l'application -->
+    <script src="script.js"></script>
+</body>
+</html>
